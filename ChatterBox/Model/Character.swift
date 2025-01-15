@@ -21,7 +21,6 @@ struct Character: Decodable{
         case aliases
         case status
         case portrayedBy
-        case death
     }
     
     init(from decoder: any Decoder) throws {
@@ -38,8 +37,8 @@ struct Character: Decodable{
         let deathDecoder = JSONDecoder()
         deathDecoder.keyDecodingStrategy = .convertFromSnakeCase
         
-        let deathData = try! Data(contentsOf: Bundle.main.url(forResource: "sampledeath", withExtension: "json")!)
-        death = try! deathDecoder.decode(Death.self, from: deathData)
+        let deathData = try Data(contentsOf: Bundle.main.url(forResource: "sampledeath", withExtension: "json")!)
+        death = try deathDecoder.decode(Death.self, from: deathData)
         
     }
 }
