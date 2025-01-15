@@ -52,4 +52,27 @@ struct FetchService{
        
     }
     
+    
+    func fetchDeath(for character: String) async throws -> Death? {
+        let fetchURL = baseURL.appending(path: "deaths")
+        
+        
+        let (data, response) = try await URLSession.shared.data(from: fetchURL)
+        
+        guard let response = response as? HTTPURLResponse , response.statusCode == 200 else{
+            throw FetchError.badResponse
+        }
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        
+        let deaths = try decoder.decode([Death].self, from: data)
+        
+        for death in deaths {
+            if death.character == character{
+                return death
+            }
+        }
+        return nil
+    }
+    
 }
