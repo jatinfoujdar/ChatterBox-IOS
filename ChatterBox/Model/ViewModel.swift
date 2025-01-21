@@ -20,15 +20,25 @@ class ViewModel{
     var character: Char
     
     
-    init(){
+    init() {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         
-        let quoteData = try! Data(contentsOf: Bundle.main.url(forResource: "samplequote", withExtension: "json")!)
-        quote = try! decoder.decode(Quote.self, from: quoteData)
-        
-        let characterData = try! Data(contentsOf: Bundle.main.url(forResource: "samplequote", withExtension: "json")!)
-        character = try! decoder.decode(Char.self, from: characterData)
+        do {
+            guard let quoteDataURL = Bundle.main.url(forResource: "samplequote", withExtension: "json") else {
+                fatalError("Missing samplequote.json file")
+            }
+            let quoteData = try Data(contentsOf: quoteDataURL)
+            quote = try decoder.decode(Quote.self, from: quoteData)
+            
+            guard let characterDataURL = Bundle.main.url(forResource: "samplecharacter", withExtension: "json") else {
+                fatalError("Missing samplecharacter.json file")
+            }
+            let characterData = try Data(contentsOf: characterDataURL)
+            character = try decoder.decode(Char.self, from: characterData)
+        } catch {
+            fatalError("Error loading or decoding JSON data: \(error)")
+        }
     }
     
     func getData(for show: String) async{
@@ -36,7 +46,7 @@ class ViewModel{
         
         do{
             quote = try await fetcher.fetchQuote(from: show)
-        
+           
             character = try await fetcher.fetchCharacter(quote.character)
             
             character.death = try await fetcher.fetchDeath(for: character.name)
