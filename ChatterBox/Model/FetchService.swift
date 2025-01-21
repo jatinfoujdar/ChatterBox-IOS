@@ -31,7 +31,7 @@ struct FetchService{
     }
     
     
-    func fetchCharacter(_ name: String) async throws -> Character {
+    func fetchCharacter(_ name: String) async throws -> Char {
         
         let characterURL = baseURL.appending(path: "characters")
         let fetchURL = characterURL.appending(queryItems: [URLQueryItem(name: "name", value: name)])
@@ -46,7 +46,7 @@ struct FetchService{
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         
-        let characters = try decoder.decode([Character].self, from: data)
+        let characters = try decoder.decode([Char].self, from: data)
         
         return characters[0]
        
